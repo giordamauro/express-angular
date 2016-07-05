@@ -66,10 +66,6 @@ body {
   background-color: #428bca;
 }
 
-tr.active {
-  background-color: #428bca;
-}
-
 /*
  * Main content
  */
@@ -105,4 +101,21 @@ tr.active {
 .placeholder img {
   display: inline-block;
   border-radius: 50%;
+}
+
+
+/*
+ * Custom CSS
+ */
+
+tr.active {
+  color: blue;
+}
+.navbar-button {
+  margin-top: 8px;
+  margin-right: 7px;
+}
+
+input.ng-dirty.ng-invalid {
+    border: 1px solid orangered;
 }
