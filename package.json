@@ -1,11 +1,12 @@
 {
   "name": "express-angular",
   "version": "1.0.0",
-  "description": "",
+  "description": "MEAN simple application for WebTools course",
   "main": "app.js",
   "dependencies": {
     "body-parser": "^1.15.2"
   },
+  "repository": "https://github.com/mgiorda/express-angular.git",
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
