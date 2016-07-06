@@ -8,7 +8,9 @@ app.controller("UserController", function($scope, $http) {
 
       $http.get('/api/users')
         .success(function(users) {
+            $scope.selectedRow = -1;
             $scope.selectedUser =  null;
+            
             $scope.users = users;
         })
         .error(function(err) {
@@ -18,20 +20,38 @@ app.controller("UserController", function($scope, $http) {
 
 	$scope.createUser = function(name, lastname, gender, age) {
     	
+      var userGender = gender ? gender : "M";
+
       var userData = {};
       userData.firstName = name;
       userData.lastName = lastname;
-      userData.gender = gender;
+      userData.gender = userGender;
       userData.age = age;
 
       $http.post('/api/users', userData)
         .success(function(user) {
-          alert('User created!');
           $scope.readUsers();
       })
       .error(function(err) {
         alert('Error creating user - ' + JSON.stringify(err));
       });
+  };
+
+  $scope.readUserById = function() {
+    var userId = $scope.searchUserId;
+    if((''+ userId).length == 24) {
+
+      $http.get('/api/users/' + $scope.searchUserId)
+          .success(function(user) {
+              $scope.selectedRow = 0;
+              $scope.selectedUser =  user;
+              
+              $scope.users = [user];
+          })
+          .error(function(err) {
+              alert("User not found");
+          });
+    }
   };
 
 	$scope.updateUser = function(gender) {
@@ -41,27 +61,25 @@ app.controller("UserController", function($scope, $http) {
 
       $http.put('/api/users/' + userId, $scope.selectedUser)
         .success(function(user) {
-          alert('User updated!');
           $scope.readUsers();
         })
         .error(function(err) {
           alert('Error updating user - ' + JSON.stringify(err));
         });
-  	};
+  };
 
-    $scope.deleteUser = function() {
+  $scope.deleteUser = function() {
     	
       var userId = $scope.selectedUser._id;
 
       $http.delete('/api/users/' + userId)
         .success(function() {
-          alert('Deleted user ' + userId);
           $scope.readUsers();
         })
         .error(function(err) {
           alert('Error deleting user - ' + JSON.stringify(err));
         });
-  	};
+  };
 
   	// Events:
 
@@ -75,6 +93,7 @@ app.controller("UserController", function($scope, $http) {
 		$scope.selectedUser.gender = tableRow.user.gender;
 		$scope.selectedUser.age = tableRow.user.age;
 	};
+
 });
 
 // Directives;
