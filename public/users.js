@@ -5,19 +5,62 @@ var app = angular.module("mgApp", []);
 app.controller("UserController", function($scope, $http) {
      
     $scope.readUsers = function() {
-    	$scope.users = [{"_id": 123456, "firstName": "Mauro", "lastName": "Giorda", "age": 28, "gender": "M"}, {"_id": 654321, "firstName": "Jane", "lastName": "Doe", "age": 30, "gender": "F"}];
+
+      $http.get('/api/users')
+        .success(function(users) {
+            $scope.selectedUser =  null;
+            $scope.users = users;
+        })
+        .error(function(err) {
+          alert('Error getting users - ' + JSON.stringify(err));
+        });
 	};
 
 	$scope.createUser = function(name, lastname, gender, age) {
-    	alert('created!');
-  	};
+    	
+      var userData = {};
+      userData.firstName = name;
+      userData.lastName = lastname;
+      userData.gender = gender;
+      userData.age = age;
 
-	$scope.updateUser = function(name, lastname, gender, age) {
-    	alert('updated!');
+      $http.post('/api/users', userData)
+        .success(function(user) {
+          alert('User created!');
+          $scope.readUsers();
+      })
+      .error(function(err) {
+        alert('Error creating user - ' + JSON.stringify(err));
+      });
+  };
+
+	$scope.updateUser = function(gender) {
+
+      $scope.selectedUser.gender = gender;
+      var userId = $scope.selectedUser._id;
+
+      $http.put('/api/users/' + userId, $scope.selectedUser)
+        .success(function(user) {
+          alert('User updated!');
+          $scope.readUsers();
+        })
+        .error(function(err) {
+          alert('Error updating user - ' + JSON.stringify(err));
+        });
   	};
 
     $scope.deleteUser = function() {
-    	alert('deleted user" + $scope.selectedUser._id + "!');
+    	
+      var userId = $scope.selectedUser._id;
+
+      $http.delete('/api/users/' + userId)
+        .success(function() {
+          alert('Deleted user ' + userId);
+          $scope.readUsers();
+        })
+        .error(function(err) {
+          alert('Error deleting user - ' + JSON.stringify(err));
+        });
   	};
 
   	// Events:
@@ -26,7 +69,8 @@ app.controller("UserController", function($scope, $http) {
 
 		$scope.selectedRow = row; 
 		$scope.selectedUser =  {};
-		$scope.selectedUser.firstName = tableRow.user.firstName;
+		$scope.selectedUser._id = tableRow.user._id;
+    $scope.selectedUser.firstName = tableRow.user.firstName;
 		$scope.selectedUser.lastName = tableRow.user.lastName;
 		$scope.selectedUser.gender = tableRow.user.gender;
 		$scope.selectedUser.age = tableRow.user.age;
